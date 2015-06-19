@@ -5,6 +5,7 @@ Features to add:
 * Save/Load
 * Options
 * Highlight cells when you have duplicate numbers in row/column/box
+
 ***
 Simple juego del Sudoku utilizando la librería Swing de Java. Posee tres distintos niveles, los que repercuten en la cantidad de espacios en blanco en el tablero. También posee un botón 'Revisar' el cual te avisa si es tienes números mal puestos.
 
