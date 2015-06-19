@@ -1,4 +1,6 @@
 # SudokuMaster
+
+![Sudoku Screenshot](screenshot.png)
 Simple Sudoku game build using Java Swing library. It has three different levels, that modify the amount of blanks spaces in the board. It has a 'Check' button, that tells you if you have wrongly placed numbers.
 
 Features to add:
