@@ -30,9 +30,7 @@ public class Window extends JFrame {
 	public JButton checkButton, optionsButton;
 	public SudokuGenerator sg;
 	public int boardSize = 9;
-	private final int EASY = 47;
-	private final int MEDIUM = 53;
-	private final int HARD = 56;
+	private final int EASY = 1, MEDIUM = 2, HARD = 3, VERY_HARD = 4, EVIL = 5;
 
 	public Window() {
 		super("SudokuMaster");
@@ -60,7 +58,7 @@ public class Window extends JFrame {
 				window.remove(boardPanel);
 				boardPanel = new BoardPanel();
 				window.add(boardPanel);
-				Object[] selectionValues = { "Fácil", "Medio", "Difícil" };
+				Object[] selectionValues = { "Fácil", "Medio", "Difícil", "Muy Difícil", "Endemoniado" };
 				String initialSelection = "Fácil";
 				String selected = "";
 				Object selection = JOptionPane.showInputDialog(null,
@@ -78,6 +76,12 @@ public class Window extends JFrame {
 					break;
 				case "Difícil":
 					boardPanel.createSudoku(boardSize, HARD);
+					break;
+				case "Muy Difícil":
+					boardPanel.createSudoku(boardSize, VERY_HARD);
+					break;
+				case "Endemoniado":
+					boardPanel.createSudoku(boardSize, EVIL);
 					break;
 				}
 				topLabel.setText("Buena Suerte!");
@@ -132,7 +136,7 @@ public class Window extends JFrame {
 						int cellValue = boardPanel.cells[i][j].getValue();
 						if (cellValue != -1) {
 							if (cellValue != 0
-									&& cellValue != boardPanel.fullBoard[i][j]) {
+									&& cellValue != boardPanel.fullBoard.board[i][j]) {
 								++errors;
 							} else if (cellValue == 0) {
 								++blankSpaces;

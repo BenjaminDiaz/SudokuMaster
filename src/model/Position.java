@@ -14,9 +14,13 @@ public class Position {
 		this.col = col;
 	}
 
+	/**
+	 * Returns position in terms of row and column. First digit is row, second
+	 * is column. E.g: '01', '24', '09', '00', etc.
+	 */
 	@Override
 	public String toString() {
-		return "Position [row=" + row + ", col=" + col + "]";
+		return row + "" + col;
 	}
 
 }

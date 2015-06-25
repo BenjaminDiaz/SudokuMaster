@@ -83,26 +83,24 @@ public class Cell extends JPanel {
 
 	}
 
-	public int getValue() {
-		if (!input.isVisible()) {
-			return value;
-		} else if (input.getText().equals("")) {
-			return 0;
-		} else {
-			int inputValue;
-			try {
-				inputValue = Integer.parseInt(input.getText());
-				if (inputValue > 0 && inputValue < 10) {
-					return inputValue;
-				} else {
-					return -1;
-				}
-			} catch (Exception e) {
-				System.out.println(input.getText());
-				return -1;
-			}
-		}
-
-	}
+	 public int getValue() {
+	        if (value != 0) {
+	            return value;
+	        } else if(!(input.getText().equals(""))){
+	            int inputValue;
+	            try {
+	                inputValue = Integer.parseInt(input.getText());
+	                if (inputValue > 0 && inputValue < 10) {
+	                    return inputValue;
+	                } else {
+	                    return -1;
+	                }
+	            } catch (Exception e) {
+	                System.out.println(input.getText());
+	                return -1;
+	            }
+	        }
+	        return 0;
+	    }
 
 }

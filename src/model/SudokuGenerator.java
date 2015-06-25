@@ -1,208 +1,156 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 /**
+ * Generates a ready-to-play Sudoku board
  * 
  * @author Benjamin Diaz
  *
  */
 public class SudokuGenerator {
 
-	public SudokuSolver solver;
-	public int[][] readyBoard;
-	public int[][] fullBoard;
+	public Board fullBoard;
+	public Board diggedBoard;
+	public SudokuSolver solver = new SudokuSolver();
 
-	public SudokuGenerator() {
-		solver = new SudokuSolver();
+	public void generate(int difficulty) {
+		fullBoard = generateFullBoard();
+		diggedBoard = dig(difficulty, fullBoard);
+	}
+
+	private Board generateFullBoard() {
+		fullBoard = lasVegas(11);
+		while (fullBoard == null) {
+			fullBoard = lasVegas(11);
+		}
+		return fullBoard;
 	}
 
 	/**
-	 * Generates board array and initializes it with zeroes.
+	 * Generates a full Sudoku board implementing a Las Vegas algorithm. It
+	 * chooses a determined number of positions to fill randomly. Then it
+	 * recursively checks if they are valid, then it uses the solving function
+	 * to fill the board.
 	 * 
-	 * @param size
-	 * @return 2D array board filled with zeroes
+	 * @param givensCount
+	 *            The number of givens that will be randomly placed
+	 * @return Full Sudoku board
 	 */
-	public int[][] getEmptyBoard(int size) {
-		int[][] board = new int[size][size];
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				board[i][j] = 0;
+	private Board lasVegas(int givensCount) {
+		ArrayList<Position> positions = new ArrayList<Position>();
+		for (int i = 0; i < Board.SIZE; i++) {
+			for (int j = 0; j < Board.SIZE; j++) {
+				positions.add(new Position(i, j));
 			}
+		}
+		ArrayList<Position> givens = randomSample(positions, givensCount);
+		Board partialBoard = new Board();
+		partialBoard = lasVegas(partialBoard, givens, 0);
+		fullBoard = solver.solve(partialBoard);
+		return fullBoard;
+	}
+
+	/**
+	 * 
+	 * @param board
+	 *            The board
+	 * @param givens
+	 *            The position list of the givens
+	 * @param i
+	 *            The current index of the givens positions
+	 * @return Full Sudoku board
+	 */
+	private Board lasVegas(Board board, ArrayList<Position> givens, int i) {
+		/* All givens have been filled */
+		if (i >= givens.size()) {
+			return board;
+		}
+
+		Position currentCell = givens.get(i);
+		ArrayList<Integer> cellPossibilities = board
+				.getPossibilities(currentCell);
+		Collections.shuffle(cellPossibilities);
+		for (Integer value : cellPossibilities) {
+			board.setCell(currentCell, value);
+			Board solution = lasVegas(board, givens, i + 1);
+			if (solution != null) {
+				return solution;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * A simple function to obtain a random sample of givens from all positions
+	 * 
+	 * @param positions
+	 *            List containing all board positions
+	 * @param givensCount
+	 *            The number of elements of the sample
+	 * @return A random sample of givensCount amount from positions list
+	 */
+	private ArrayList<Position> randomSample(ArrayList<Position> positions,
+			int givensCount) {
+		ArrayList<Position> result = new ArrayList<Position>();
+		@SuppressWarnings("unchecked")
+		ArrayList<Position> temp = (ArrayList<Position>) positions.clone();
+		int n = temp.size();
+		Random r = new Random();
+		int randPosition;
+		while (result.size() < givensCount) {
+			randPosition = r.nextInt(n);
+			result.add(temp.get(randPosition));
+			temp.remove(randPosition);
+			n--;
+		}
+
+		return result;
+	}
+
+	private Board dig(int difficulty, Board board) {
+		DiggingStrategy dg = new DiggingStrategy(difficulty);
+		return dig(board, dg);
+	}
+
+	private Board dig(Board fullBoard, DiggingStrategy dg) {
+		Board board = fullBoard.clone();
+		int digCount = 0;
+		int previousValue;
+		boolean hasAnotherSolution = false;
+		ArrayList<Integer> possibilities;
+		for (Position cell : dg.cells) {
+			if (!(dg.canDig(board, cell))) {
+				continue;
+			}
+			previousValue = board.getCell(cell);
+			board.clear(cell);
+			possibilities = board.getPossibilities(cell);
+			possibilities.remove((Object)previousValue);
+			hasAnotherSolution = false;
+			for (Integer newValue : possibilities) {
+				board.setCell(cell, newValue);
+				if (solver.solve(board) != null) {
+					hasAnotherSolution = true;
+				}
+			}
+			/* If it has another solution, revert changes */
+			if (hasAnotherSolution) {
+				board.setCell(cell, previousValue);
+			}
+			/* Else, dig it */
+			else {
+				board.clear(cell);
+				digCount += 1;
+			}
+			if (digCount > dg.LIMIT) {
+				return board;
+			}
+			
+
 		}
 		return board;
 	}
-
-	/**
-	 * Generates random Sudoku board and sets the full board and the ready to
-	 * play board (the one with the blank spaces). First, it creates a new 2D
-	 * array for the board and an array for the board positions. Then it creates
-	 * an array that contains numbers from 1 to 9 and shuffles it. Finally, it
-	 * calls the recursive function that creates the full board and then it
-	 * removes a defined amount of random spaces from it, in a symmetric way.
-	 * 
-	 * @param size
-	 *            Size of the Sudoku board
-	 * @param blankCells
-	 *            Number of cells to leave empty
-	 *
-	 */
-	public void generateBoard(int size, int blankCells) {
-		int[][] board = getEmptyBoard(size);
-
-		readyBoard = new int[size][size];
-		Position[] positions = solver.getPositions(board);
-		int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		shuffle(numbers);
-		generateRandomBoard(positions, 0, numbers, board);
-		setFullBoard(board);
-		while (!removeRandomCells(positions, board, blankCells, 0)) {
-			board = getEmptyBoard(size);
-			generateRandomBoard(positions, 0, numbers, board);
-			setFullBoard(board);
-		}
-		setReadyBoard(board);
-	}
-
-	public void setFullBoard(int[][] board) {
-		fullBoard = new int[board.length][board.length];
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board.length; j++) {
-				fullBoard[i][j] = board[i][j];
-			}
-		}
-	}
-
-	public void setReadyBoard(int[][] board) {
-		readyBoard = new int[board.length][board.length];
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board.length; j++) {
-				readyBoard[i][j] = board[i][j];
-			}
-		}
-	}
-
-	/**
-	 * Removes defined number of spaces of Sudoku board, leaving them blank.
-	 * Each loop it removes two random spaces symetrically positioned.
-	 * 
-	 * @param positions
-	 *            Array of board positions
-	 * @param board
-	 *            Current Sudoku board
-	 * @param amount
-	 *            Amount of spaces to remove
-	 * @param a
-	 *            Number of times the function has been called.
-	 *
-	 * @return True if it worked correctly, false if the function is called too
-	 *         many times, preventing buffer overflow
-	 */
-	private boolean removeRandomCells(Position[] positions, int[][] board,
-			int amount, int a) {
-		if (a > 100){
-			System.out.println("Reached max calls!");
-			return false;
-	}
-		if (amount <= 0) {
-			return true;
-		}
-		Random r = new Random();
-		int l = positions.length;
-		int rIndex = r.nextInt(l);
-		Position p = positions[rIndex];
-		Position invP = positions[l - rIndex - 1];
-		if (!solver.isEmpty(p.row, p.col, board)) {
-			int aux = board[p.row][p.col];
-			int aux2 = board[invP.row][invP.col];
-			board[p.row][p.col] = 0;
-			board[invP.row][invP.col] = 0;
-			if (solver.hasUniqueSolution(board)) {
-				return removeRandomCells(positions, board, amount - 2, a+1);
-			} else {
-				System.out.println("No unique solution!");
-				board[p.row][p.col] = aux;
-				board[invP.row][invP.col] = aux2;
-				return removeRandomCells(positions, board, amount, a+1);
-			}
-		} else {
-			return removeRandomCells(positions, board, amount, a);
-		}
-
-	}
-
-	/**
-	 * Shuffles an array using Fisher-Yates algorithm
-	 * 
-	 * @param array
-	 *            Array to be shuffled
-	 */
-	public void shuffle(int[] array) {
-		Random r = new Random();
-		int arrayLength = array.length;
-		for (int i = arrayLength - 1; i > 0; i--) {
-			int index = r.nextInt(i + 1);
-			int aux = array[index];
-			array[index] = array[i];
-			array[i] = aux;
-		}
-	}
-
-	/**
-	 * Generates full Sudoku board and returns it.
-	 * 
-	 * @param positions
-	 *            Array of board positions
-	 * @param index
-	 *            Current index of positions array
-	 * @param numbers
-	 *            Array of available numbers for each board cell.
-	 * @param board
-	 * @return Full Sudoku board
-	 */
-	private boolean generateRandomBoard(Position[] positions, int index,
-			int[] numbers, int[][] board) {
-		if (index >= positions.length) {
-			return true;
-		}
-		shuffle(numbers);
-		Position p = positions[index];
-		for (int i = 0; i < 9; i++) {
-
-			if (solver.isValid(p.row, p.col, numbers[i], board)) {
-				board[p.row][p.col] = numbers[i];
-				if (generateRandomBoard(positions, index + 1, numbers, board)) {
-					return true;
-				}
-				board[p.row][p.col] = 0;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Prints board in console
-	 * 
-	 * @param board
-	 */
-	public void printBoard(int[][] board) {
-		System.out.println();
-		// for (int[] a : board) {
-		// System.out.println(Arrays.toString(a));
-		// }
-		for (int i = 0; i < board.length; i++) {
-			System.out.print("[ ");
-			for (int j = 0; j < board.length; j++) {
-				if (board[i][j] == 0)
-					System.out.print("  ");
-				else
-					System.out.print(board[i][j] + " ");
-			}
-			System.out.print("]");
-			System.out.println();
-		}
-		System.out.println();
-	}
-
 }
