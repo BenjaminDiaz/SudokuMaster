@@ -1,8 +1,9 @@
 # SudokuMaster
 
+![Sudoku Screenshot](screenshot.png)
+
 ## English
 
-![Sudoku Screenshot](screenshot.png)
 Simple Sudoku game build using Java Swing library. It has five different levels. It has a 'Check' button, that tells you if you have wrongly placed numbers.
 
 Features to add:
@@ -23,6 +24,6 @@ Características que agregrar:
 * Opciones
 * Destacar celdas cuando existan duplicados en la misma fila/columna/caja
 
-Basado en el trabjo de team FUXIA: [https://github.com/mihneagiurgea/fuxia](https://github.com/mihneagiurgea/fuxia)
+Basado en el trabajo de team FUXIA: [https://github.com/mihneagiurgea/fuxia](https://github.com/mihneagiurgea/fuxia)
 
 Algoritmo de 'excavación' (Digging algorithm) desarollado y descrito por ZHANGroup: [http://zhangroup.aporc.org/images/files/Paper_3485.pdf](http://zhangroup.aporc.org/images/files/Paper_3485.pdf)
