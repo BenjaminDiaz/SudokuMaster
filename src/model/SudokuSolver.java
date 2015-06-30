@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,7 +9,10 @@ import java.util.ArrayList;
  * @author Benjamin Diaz
  * 
  */
-public class SudokuSolver {
+public class SudokuSolver implements Serializable {
+
+	private static final long serialVersionUID = -569772717150852912L;
+
 	/**
 	 * Solves the sudoku and returns it solved. Implements a recursive algorithm
 	 * that does the following: First, it searches for the empty cell with the

@@ -8,10 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import model.SudokuGenerator;
@@ -30,98 +27,58 @@ public class Window extends JFrame {
 	public JButton checkButton, optionsButton;
 	public SudokuGenerator sg;
 	public int boardSize = 9;
-	private final int EASY = 1, MEDIUM = 2, HARD = 3, VERY_HARD = 4, EVIL = 5;
 
 	public Window() {
 		super("SudokuMaster");
 		setLayout(new BorderLayout(20, 20));
-		addMenu(this);
-		addBoardPanel(this);
-		addButtonPanel(this);
-		addTopPanel(this);
+		addMenu();
+		addBoardPanel(1);
+		addButtonPanel();
+		addTopPanel();
 		pack();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setResizable(false);
-		boardPanel.createSudoku(boardSize, EASY);
+
 	}
 
-	private void addMenu(final Window window) {
-		JMenuBar menu = new JMenuBar();
-		JMenu sudokuMenu = new JMenu("Sudoku");
-		JMenuItem newSudoku = new JMenuItem("Nuevo Sudoku...");
-		newSudoku.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				topLabel.setText("Cargando Sudoku...");
-				window.remove(boardPanel);
-				boardPanel = new BoardPanel();
-				window.add(boardPanel);
-				Object[] selectionValues = { "Fácil", "Medio", "Difícil", "Muy Difícil", "Endemoniado" };
-				String initialSelection = "Fácil";
-				String selected = "";
-				Object selection = JOptionPane.showInputDialog(null,
-						"Elige la dificultad:", "Nuevo Sudoku",
-						JOptionPane.QUESTION_MESSAGE, null, selectionValues,
-						initialSelection);
-				selected = selection.toString();
-				
-				switch (selected) {
-				case "Fácil":
-					boardPanel.createSudoku(boardSize, EASY);
-					break;
-				case "Medio":
-					boardPanel.createSudoku(boardSize, MEDIUM);
-					break;
-				case "Difícil":
-					boardPanel.createSudoku(boardSize, HARD);
-					break;
-				case "Muy Difícil":
-					boardPanel.createSudoku(boardSize, VERY_HARD);
-					break;
-				case "Endemoniado":
-					boardPanel.createSudoku(boardSize, EVIL);
-					break;
-				}
-				topLabel.setText("Buena Suerte!");
-			}
-		});
-		JMenuItem exitSudoku = new JMenuItem("Salir");
-		exitSudoku.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				System.exit(EXIT_ON_CLOSE);
-
-			}
-		});
-		sudokuMenu.add(newSudoku);
-		sudokuMenu.add(exitSudoku);
-		JMenu helpMenu = new JMenu("Ayuda");
-		JMenuItem aboutSudoku = new JMenuItem("Acerca de SudokuMaster");
-		helpMenu.add(aboutSudoku);
-		menu.add(sudokuMenu);
-		menu.add(helpMenu);
-		window.setJMenuBar(menu);
+	public void setLabel(String message) {
+		topLabel.setText(message);
 	}
 
-	private void addBoardPanel(Window window) {
-		boardPanel = new BoardPanel();
-		window.add(boardPanel, BorderLayout.CENTER);
+	private void addMenu() {
+		JMenuBar menu = new Menu(this);
+		setJMenuBar(menu);
+	}
+
+	private void addBoardPanel(int difficulty) {
+		boardPanel = new BoardPanel(this, boardSize, difficulty);
+		add(boardPanel, BorderLayout.CENTER);
 		boardPanel.repaint();
 	}
+	
+	public BoardPanel getBoardPanel() {
+		return boardPanel;
+	}
+	
+	public void reCreateSudoku(int difficulty) {
+		getContentPane().removeAll();
+		addTopPanel();
+		addBoardPanel(difficulty);		
+		addButtonPanel();
+		revalidate();
+	}
 
-	private void addTopPanel(Window window) {
+	private void addTopPanel() {
 		topPanel = new JPanel();
 		topLabel = new JLabel("Buena Suerte!");
 		topLabel.setFont(new Font("Arial Bold", Font.PLAIN, 20));
 		topPanel.add(topLabel);
-		window.add(topPanel, BorderLayout.PAGE_START);
+		add(topPanel, BorderLayout.PAGE_START);
 
 	}
 
-	private void addButtonPanel(Window window) {
+	private void addButtonPanel() {
 		buttonPanel = new JPanel();
 		checkButton = new JButton("Revisar");
 		checkButton.addActionListener(new ActionListener() {
@@ -173,6 +130,17 @@ public class Window extends JFrame {
 		buttonPanel.add(checkButton);
 		optionsButton = new JButton("Opciones");
 		buttonPanel.add(optionsButton);
-		window.add(buttonPanel, BorderLayout.PAGE_END);
+		add(buttonPanel, BorderLayout.PAGE_END);
 	}
+
+	public void setBoardPanel(BoardPanel bp) {
+		getContentPane().removeAll();
+		addTopPanel();
+		boardPanel = bp;
+		add(boardPanel);
+		addButtonPanel();
+		revalidate();
+	}
+	
+
 }

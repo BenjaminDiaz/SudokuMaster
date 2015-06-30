@@ -22,13 +22,13 @@ public class BoardPanel extends JPanel {
 
 	private static final long serialVersionUID = -3256290564832372809L;
 
-	Cell[][] cells;
-	int boardSize = Board.SIZE;
+	public Cell[][] cells;
 	public SudokuGenerator sg;
-	Board board; // Board with removed spaces
-	Board fullBoard; // Complete board used for comparing results
+	public Board board; // Board with removed spaces
+	public Board fullBoard; // Complete board used for comparing results
 
-	public BoardPanel() {
+
+	public BoardPanel(Window window, int boardSize, int difficulty) {
 		setLayout(new GridLayout(9, 9));
 		Border blackline = BorderFactory.createLineBorder(Color.black);
 		setBorder(blackline);
@@ -39,9 +39,6 @@ public class BoardPanel extends JPanel {
 				add(cells[i][j]);
 			}
 		}
-	}
-
-	public void createSudoku(int boardSize, int difficulty) {
 		sg = new SudokuGenerator();
 		sg.generate(difficulty);
 		board = sg.diggedBoard;
@@ -52,6 +49,14 @@ public class BoardPanel extends JPanel {
 				cells[i][j].value = board.getCell(p);
 			}
 		}
+		repaint();
+		revalidate();
+	}
+
+	public BoardPanel(BoardPanel sudoku) {
+		cells = sudoku.cells;
+		board = sudoku.board;
+		fullBoard = sudoku.fullBoard;
 		repaint();
 		revalidate();
 

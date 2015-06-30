@@ -1,11 +1,16 @@
 package model;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Benjamin Diaz
  *
  */
-public class Position {
+public class Position implements Serializable{
+	
+	private static final long serialVersionUID = 6119607630239143971L;
+	
 	int row;
 	int col;
 

@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,7 +12,10 @@ import java.util.Iterator;
  * @author Benjamin Diaz
  *
  */
-public class Board {
+public class Board implements Serializable {
+	
+	private static final long serialVersionUID = -2329080360064804899L;
+	
 	public int[][] board;
 	/*
 	 * Maps positions as String (this must be changed in the future) to its

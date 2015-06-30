@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -10,8 +11,10 @@ import java.util.Random;
  * @author Benjamin Diaz
  *
  */
-public class SudokuGenerator {
-
+public class SudokuGenerator implements Serializable {
+	
+	private static final long serialVersionUID = -391999526618778881L;
+	
 	public Board fullBoard;
 	public Board diggedBoard;
 	public SudokuSolver solver = new SudokuSolver();

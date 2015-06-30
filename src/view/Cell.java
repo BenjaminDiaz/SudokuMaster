@@ -22,12 +22,13 @@ public class Cell extends JPanel {
 	boolean alert;
 	static int size = 50;
 	public JTextField input;
-	public boolean fixed = true;
+	public boolean hasTextField = false;
 
 	public Cell(int value) {
 		this.value = value;
 		setBorder(new EmptyBorder(5, 5, 15, 0));
 		if (value == 0) {
+			hasTextField = true;
 			input = new JTextField(1);
 			input.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 			input.setFont(new Font("Arial Bold", Font.ITALIC, 22));
@@ -54,7 +55,6 @@ public class Cell extends JPanel {
 
 				@Override
 				public void changedUpdate(DocumentEvent e) {
-					// TODO Auto-generated method stub
 
 				}
 			});
@@ -75,6 +75,8 @@ public class Cell extends JPanel {
 			g.setColor(Color.BLACK);
 			g.setFont(new Font("Arial Bold", Font.PLAIN, 24));
 			g.drawString(String.valueOf(value), size / 2 - 5, size / 2 + 5);
+			input.setVisible(false);
+			revalidate();
 		} else {
 
 			input.setVisible(true);
@@ -83,24 +85,24 @@ public class Cell extends JPanel {
 
 	}
 
-	 public int getValue() {
-	        if (value != 0) {
-	            return value;
-	        } else if(!(input.getText().equals(""))){
-	            int inputValue;
-	            try {
-	                inputValue = Integer.parseInt(input.getText());
-	                if (inputValue > 0 && inputValue < 10) {
-	                    return inputValue;
-	                } else {
-	                    return -1;
-	                }
-	            } catch (Exception e) {
-	                System.out.println(input.getText());
-	                return -1;
-	            }
-	        }
-	        return 0;
-	    }
+	public int getValue() {
+		if (value != 0) {
+			return value;
+		} else if (!(input.getText().equals(""))) {
+			int inputValue;
+			try {
+				inputValue = Integer.parseInt(input.getText());
+				if (inputValue > 0 && inputValue < 10) {
+					return inputValue;
+				} else {
+					return -1;
+				}
+			} catch (Exception e) {
+				System.out.println(input.getText());
+				return -1;
+			}
+		}
+		return 0;
+	}
 
 }
