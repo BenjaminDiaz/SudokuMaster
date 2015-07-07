@@ -1,6 +1,5 @@
 package model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -9,9 +8,8 @@ import java.util.ArrayList;
  * @author Benjamin Diaz
  * 
  */
-public class SudokuSolver implements Serializable {
+public class SudokuSolver{
 
-	private static final long serialVersionUID = -569772717150852912L;
 
 	/**
 	 * Solves the sudoku and returns it solved. Implements a recursive algorithm
@@ -28,10 +26,10 @@ public class SudokuSolver implements Serializable {
 	public Board solve(Board board) {
 		board = board.clone();
 		/* Find the empty cell with the minimum number of filling possibilities. */
-		int minSize = Board.SIZE, minIndex = board.positions.size();
+		int minSize = Board.SIZE, minIndex = board.getPositions().size();
 		ArrayList<Integer> possibilities;
-		for (int i = 0; i < board.positions.size(); i++) {
-			Position p = board.positions.get(i);
+		for (int i = 0; i < board.getPositions().size(); i++) {
+			Position p = board.getPositions().get(i);
 			/* If cell not empty, continue */
 			if (board.getCell(p) != 0) {
 				continue;
@@ -50,7 +48,7 @@ public class SudokuSolver implements Serializable {
 			return board;
 		}
 		/* Fill cell with each possibility until solution is found */
-		Position p = board.positions.get(minIndex);
+		Position p = board.getPositions().get(minIndex);
 		possibilities = board.getPossibilities(p);
 		if (possibilities.size() == 0) {
 			return null;

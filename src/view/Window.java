@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
+import model.Sudoku;
 import model.SudokuGenerator;
 
 public class Window extends JFrame {
@@ -27,6 +28,7 @@ public class Window extends JFrame {
 	public JButton checkButton, optionsButton;
 	public SudokuGenerator sg;
 	public int boardSize = 9;
+	private Sudoku sudoku;
 
 	public Window() {
 		super("SudokuMaster");
@@ -52,7 +54,15 @@ public class Window extends JFrame {
 	}
 
 	private void addBoardPanel(int difficulty) {
-		boardPanel = new BoardPanel(this, boardSize, difficulty);
+		sg = new SudokuGenerator();
+		sudoku = sg.generate(difficulty);
+		boardPanel = new BoardPanel(this);
+		add(boardPanel, BorderLayout.CENTER);
+		boardPanel.repaint();
+	}
+	
+	private void addBoardPanel() {
+		boardPanel = new BoardPanel(this);
 		add(boardPanel, BorderLayout.CENTER);
 		boardPanel.repaint();
 	}
@@ -65,6 +75,13 @@ public class Window extends JFrame {
 		getContentPane().removeAll();
 		addTopPanel();
 		addBoardPanel(difficulty);		
+		addButtonPanel();
+		revalidate();
+	}
+	public void reset() {
+		getContentPane().removeAll();
+		addTopPanel();
+		addBoardPanel();		
 		addButtonPanel();
 		revalidate();
 	}
@@ -86,26 +103,9 @@ public class Window extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boardPanel.repaint();
-				int errors = 0;
-				int blankSpaces = 0;
-				for (int i = 0; i < boardSize; i++) {
-					for (int j = 0; j < boardSize; j++) {
-						int cellValue = boardPanel.cells[i][j].getValue();
-						if (cellValue != -1) {
-							if (cellValue != 0
-									&& cellValue != boardPanel.fullBoard.board[i][j]) {
-								++errors;
-							} else if (cellValue == 0) {
-								++blankSpaces;
-							}
-						} else {
-							System.out
-									.println("Por favor ingrese solo numeros entre 1 y 9!");
-							topLabel.setText("Por favor ingrese solo numeros entre 1 y 9!");
-							return;
-						}
-					}
-				}
+				int errors = boardPanel.sudoku.getErrors();
+				int blankSpaces = boardPanel.sudoku.getBlanks();
+
 				if (errors != 0) {
 					if (errors == 1) {
 						System.out.println("Hay " + errors + " error!");
@@ -128,8 +128,6 @@ public class Window extends JFrame {
 			}
 		});
 		buttonPanel.add(checkButton);
-		optionsButton = new JButton("Opciones");
-		buttonPanel.add(optionsButton);
 		add(buttonPanel, BorderLayout.PAGE_END);
 	}
 
@@ -140,6 +138,14 @@ public class Window extends JFrame {
 		add(boardPanel);
 		addButtonPanel();
 		revalidate();
+	}
+
+	public Sudoku getSudoku() {
+		return sudoku;
+	}
+
+	public void setSudoku(Sudoku s) {
+		sudoku = s;		
 	}
 	
 

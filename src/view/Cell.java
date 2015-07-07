@@ -11,6 +11,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import model.Position;
+import model.Sudoku;
+
 public class Cell extends JPanel {
 
 	/**
@@ -18,22 +21,28 @@ public class Cell extends JPanel {
 	 */
 	private static final long serialVersionUID = 7689997863618368453L;
 
-	int value;
-	boolean alert;
-	static int size = 50;
+	private int value;
+	public static int size = 50;
 	public JTextField input;
 	public boolean hasTextField = false;
+	private Sudoku sudoku;
+	private Position position;
 
-	public Cell(int value) {
-		this.value = value;
+	public Cell(Sudoku sudoku, Position p) {
+		this.sudoku = sudoku;
+		this.position = p;
+		this.value = sudoku.getCell(position);
 		setBorder(new EmptyBorder(5, 5, 15, 0));
-		if (value == 0) {
+		if(sudoku.getEditablePositions().contains(p)) {
 			hasTextField = true;
 			input = new JTextField(1);
 			input.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 			input.setFont(new Font("Arial Bold", Font.ITALIC, 22));
 			input.setBackground(null);
 			input.setOpaque(false);
+			if(value != 0) {
+				input.setText(String.valueOf(value));
+			}
 			input.getDocument().addDocumentListener(new DocumentListener() {
 
 				@Override
@@ -41,6 +50,11 @@ public class Cell extends JPanel {
 					if (input.getText().length() < 2) {
 						input.setFont(new Font("Arial Bold", Font.ITALIC, 22));
 						input.setColumns(1);
+					}
+					try {
+						setSudokuCell(position, Integer.valueOf(input.getText()));
+					} catch (Exception e2) {
+						setSudokuCell(position, 0);
 					}
 				}
 
@@ -50,38 +64,40 @@ public class Cell extends JPanel {
 						input.setFont(new Font("Arial Bold", Font.ITALIC, 16));
 						input.setColumns(2);
 					}
-
+					try {
+						setSudokuCell(position, Integer.valueOf(input.getText()));
+					} catch (Exception e2) {
+						setSudokuCell(position, 0);
+					}
 				}
 
 				@Override
 				public void changedUpdate(DocumentEvent e) {
-
 				}
 			});
 			add(input);
 			repaint();
 			revalidate();
-			input.setVisible(false);
 		}
 		setPreferredSize(new Dimension(size, size));
+	}
+
+	private void setSudokuCell(Position p, int value) {
+		sudoku.setCell(p, value);
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.WHITE);
-		g.fillRect(2, 2, size - 1, size - 1);
+		g.fillRect(2, 2, size - 1, size - 1);		
 
-		if (value != 0) {
+		if (!hasTextField) {
 			g.setColor(Color.BLACK);
 			g.setFont(new Font("Arial Bold", Font.PLAIN, 24));
 			g.drawString(String.valueOf(value), size / 2 - 5, size / 2 + 5);
-			input.setVisible(false);
-			revalidate();
-		} else {
-
-			input.setVisible(true);
 			revalidate();
 		}
+		
 
 	}
 

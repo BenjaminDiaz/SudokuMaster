@@ -22,7 +22,7 @@ public class Board implements Serializable {
 	 * possible values
 	 */
 	private HashMap<String, ArrayList<Integer>> possibilities;
-	public ArrayList<Position> positions;
+	private ArrayList<Position> positions;
 	public static final int SIZE = 9;
 
 	/**
@@ -122,6 +122,10 @@ public class Board implements Serializable {
 	public void clear(Position p) {
 		board[p.row][p.col] = 0;
 		recomputePossibilities();
+	}
+	
+	public ArrayList<Position> getPositions() {
+		return positions;
 	}
 
 	public ArrayList<Integer> getPossibilities(Position p) {

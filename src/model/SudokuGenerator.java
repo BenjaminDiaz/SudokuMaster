@@ -1,6 +1,5 @@
 package model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -11,21 +10,20 @@ import java.util.Random;
  * @author Benjamin Diaz
  *
  */
-public class SudokuGenerator implements Serializable {
-	
-	private static final long serialVersionUID = -391999526618778881L;
-	
-	public Board fullBoard;
-	public Board diggedBoard;
+public class SudokuGenerator {
+
+	private Sudoku sudoku;
 	public SudokuSolver solver = new SudokuSolver();
 
-	public void generate(int difficulty) {
-		fullBoard = generateFullBoard();
-		diggedBoard = dig(difficulty, fullBoard);
+	public Sudoku generate(int difficulty) {
+		Board fullBoard = generateFullBoard();
+		Board diggedBoard = dig(difficulty, fullBoard);
+		sudoku = new Sudoku(fullBoard, diggedBoard);
+		return sudoku;
 	}
 
 	private Board generateFullBoard() {
-		fullBoard = lasVegas(11);
+		Board fullBoard = lasVegas(11);
 		while (fullBoard == null) {
 			fullBoard = lasVegas(11);
 		}
@@ -52,7 +50,7 @@ public class SudokuGenerator implements Serializable {
 		ArrayList<Position> givens = randomSample(positions, givensCount);
 		Board partialBoard = new Board();
 		partialBoard = lasVegas(partialBoard, givens, 0);
-		fullBoard = solver.solve(partialBoard);
+		Board fullBoard = solver.solve(partialBoard);
 		return fullBoard;
 	}
 
@@ -73,8 +71,7 @@ public class SudokuGenerator implements Serializable {
 		}
 
 		Position currentCell = givens.get(i);
-		ArrayList<Integer> cellPossibilities = board
-				.getPossibilities(currentCell);
+		ArrayList<Integer> cellPossibilities = board.getPossibilities(currentCell);
 		Collections.shuffle(cellPossibilities);
 		for (Integer value : cellPossibilities) {
 			board.setCell(currentCell, value);
@@ -95,8 +92,7 @@ public class SudokuGenerator implements Serializable {
 	 *            The number of elements of the sample
 	 * @return A random sample of givensCount amount from positions list
 	 */
-	private ArrayList<Position> randomSample(ArrayList<Position> positions,
-			int givensCount) {
+	private ArrayList<Position> randomSample(ArrayList<Position> positions, int givensCount) {
 		ArrayList<Position> result = new ArrayList<Position>();
 		@SuppressWarnings("unchecked")
 		ArrayList<Position> temp = (ArrayList<Position>) positions.clone();
@@ -131,7 +127,7 @@ public class SudokuGenerator implements Serializable {
 			previousValue = board.getCell(cell);
 			board.clear(cell);
 			possibilities = board.getPossibilities(cell);
-			possibilities.remove((Object)previousValue);
+			possibilities.remove((Object) previousValue);
 			hasAnotherSolution = false;
 			for (Integer newValue : possibilities) {
 				board.setCell(cell, newValue);
@@ -151,7 +147,6 @@ public class SudokuGenerator implements Serializable {
 			if (digCount > dg.LIMIT) {
 				return board;
 			}
-			
 
 		}
 		return board;

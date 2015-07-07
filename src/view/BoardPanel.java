@@ -8,9 +8,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import model.Board;
 import model.Position;
-import model.SudokuGenerator;
+import model.Sudoku;
 
 /**
  * 
@@ -23,44 +22,33 @@ public class BoardPanel extends JPanel {
 	private static final long serialVersionUID = -3256290564832372809L;
 
 	public Cell[][] cells;
-	public SudokuGenerator sg;
-	public Board board; // Board with removed spaces
-	public Board fullBoard; // Complete board used for comparing results
+	public Sudoku sudoku;
 
-
-	public BoardPanel(Window window, int boardSize, int difficulty) {
+	public BoardPanel(Window window) {
+		int boardSize = window.boardSize;
 		setLayout(new GridLayout(9, 9));
 		Border blackline = BorderFactory.createLineBorder(Color.black);
 		setBorder(blackline);
+		sudoku = window.getSudoku();
 		cells = new Cell[boardSize][boardSize];
 		for (int i = 0; i < boardSize; i++) {
 			for (int j = 0; j < boardSize; j++) {
-				cells[i][j] = new Cell(0);
+				cells[i][j] = new Cell(sudoku, new Position(i, j));
 				add(cells[i][j]);
 			}
 		}
-		sg = new SudokuGenerator();
-		sg.generate(difficulty);
-		board = sg.diggedBoard;
-		fullBoard = sg.fullBoard;
-		for (int i = 0; i < boardSize; i++) {
-			for (int j = 0; j < boardSize; j++) {
-				Position p = new Position(i, j);
-				cells[i][j].value = board.getCell(p);
-			}
-		}
 		repaint();
 		revalidate();
 	}
 
-	public BoardPanel(BoardPanel sudoku) {
-		cells = sudoku.cells;
-		board = sudoku.board;
-		fullBoard = sudoku.fullBoard;
-		repaint();
-		revalidate();
-
-	}
+//	public BoardPanel(BoardPanel sudoku) {
+//		cells = sudoku.cells;
+//		board = sudoku.board;
+//		fullBoard = sudoku.fullBoard;
+//		repaint();
+//		revalidate();
+//
+//	}
 
 	@Override
 	public void paint(Graphics g) {
@@ -69,23 +57,19 @@ public class BoardPanel extends JPanel {
 		super.paintChildren(g);
 		for (int i = 0; i <= cells.length; i++) {
 			g.setColor(Color.BLACK);
-			g.drawLine(i * Cell.size, 0, i * Cell.size, cells.length
-					* Cell.size);
+			g.drawLine(i * Cell.size, 0, i * Cell.size, cells.length * Cell.size);
 		}
 		for (int i = 0; i <= cells.length; i++) {
 			g.setColor(Color.BLACK);
-			g.drawLine(0, i * Cell.size, cells.length * Cell.size, i
-					* Cell.size);
+			g.drawLine(0, i * Cell.size, cells.length * Cell.size, i * Cell.size);
 		}
 		for (int i = 0; i <= cells.length; i += 3) {
 			g.setColor(Color.BLACK);
-			g.drawLine(i * Cell.size + 1, 0, i * Cell.size + 1, cells.length
-					* Cell.size);
+			g.drawLine(i * Cell.size + 1, 0, i * Cell.size + 1, cells.length * Cell.size);
 		}
 		for (int i = 0; i <= cells.length; i += 3) {
 			g.setColor(Color.BLACK);
-			g.drawLine(0, i * Cell.size + 1, cells.length * Cell.size, i
-					* Cell.size + 1);
+			g.drawLine(0, i * Cell.size + 1, cells.length * Cell.size, i * Cell.size + 1);
 		}
 	}
 

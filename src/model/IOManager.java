@@ -7,11 +7,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import view.BoardPanel;
-
 public class IOManager {
 	
-	public void saveToFile(BoardPanel sudoku) {
+	public void saveToFile(Sudoku sudoku) {
 		try(FileOutputStream fos = new FileOutputStream("sudoku.bin")) {
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(sudoku);
@@ -23,10 +21,10 @@ public class IOManager {
 		}
 	}
 	
-	public BoardPanel readFromFile() {
+	public Sudoku readFromFile() {
 		try(FileInputStream fis = new FileInputStream("sudoku.bin")){
 			ObjectInputStream ois = new ObjectInputStream(fis);
-			BoardPanel sudoku = (BoardPanel) ois.readObject();
+			Sudoku sudoku = (Sudoku) ois.readObject();
 			ois.close();
 			return sudoku;
 		} catch (FileNotFoundException e) {

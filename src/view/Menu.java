@@ -9,6 +9,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import model.IOManager;
+import model.Sudoku;
 
 public class Menu extends JMenuBar {
 
@@ -23,14 +24,14 @@ public class Menu extends JMenuBar {
 	
 	private void save() {
 		IOManager io = new IOManager();
-		io.saveToFile(window.getBoardPanel());
+		io.saveToFile(window.getSudoku());
 	}
 	
 	private void load() {
 		IOManager io = new IOManager();
-		BoardPanel sudoku = io.readFromFile();
-		window.setBoardPanel(sudoku);
-		window.repaint();		
+		Sudoku sudoku = io.readFromFile();
+		window.setSudoku(sudoku);
+		window.reset();		
 	}
 	private void setLabel(String string) {
 		window.setLabel(string);
@@ -117,6 +118,14 @@ public class Menu extends JMenuBar {
 		sudokuMenu.add(exitSudoku);
 		JMenu helpMenu = new JMenu("Ayuda");
 		JMenuItem aboutSudoku = new JMenuItem("Acerca de SudokuMaster");
+		aboutSudoku.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "www.github.com/BenjaminDiaz");
+				
+			}
+		});
 		helpMenu.add(aboutSudoku);
 		add(sudokuMenu);
 		add(helpMenu);

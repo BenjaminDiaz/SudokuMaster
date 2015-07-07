@@ -28,4 +28,25 @@ public class Position implements Serializable{
 		return row + "" + col;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + col;
+		result = prime * result + row;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Position) {
+			Position p = (Position) obj;
+			if(p.row == this.row && p.col == this.col) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+
 }
