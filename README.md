@@ -4,10 +4,11 @@
 
 ## English
 
-Simple Sudoku game build using Java Swing library. It has five different levels. It has a 'Check' button, that tells you if you have wrongly placed numbers.
+Simple Sudoku game build using Java Swing library. It has five different levels. It has a 'Check' button, that tells you if you have wrongly placed numbers. It allows you to save and load your Sudoku (in a really basic and simple way).
 
 Features to add:
-* Save/Load
+* Export to PDF
+* Improve Save/Load
 * Options
 * Highlight cells when you have duplicate numbers in row/column/box
 
@@ -17,10 +18,11 @@ Digging algorithm developed and described by ZHANGroup: [http://zhangroup.aporc.
 
 ***
 ## Español
-Simple juego del Sudoku utilizando la librería Swing de Java. Posee cinco distintos niveles. También posee un botón 'Revisar' el cual te avisa si es tienes números mal puestos.
+Simple juego del Sudoku utilizando la librería Swing de Java. Posee cinco distintos niveles. También posee un botón 'Revisar' el cual te avisa si es tienes números mal puestos. Permite guardar y cargar tu Sudoku.
 
 Características que agregrar:
-* Guardar/Cargar
+* Exportar a PDF
+* Mejorar Guardar/Cargar
 * Opciones
 * Destacar celdas cuando existan duplicados en la misma fila/columna/caja
 
